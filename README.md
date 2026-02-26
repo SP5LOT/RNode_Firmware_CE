@@ -67,7 +67,7 @@ Projekt powstał w środowisku polskiej społeczności LoRa/Meshtastic na [mesht
 
 ### Budowanie ze źródeł
 
-Pełny tutorial krok po kroku: [HYDRA_E22_TUTORIAL.md](HYDRA_E22_TUTORIAL.md)
+Pełny tutorial krok po kroku: [HYDRA_E22_TUTORIAL.md](HYDRA_E22_TUTORIAL.md) 🇵🇱 | [HYDRA_E22_TUTORIAL_EN.md](HYDRA_E22_TUTORIAL_EN.md) 🇬🇧
 
 Wymagania: Python 3.10+, PlatformIO (rozszerzenie VS Code lub CLI).
 
@@ -173,7 +173,7 @@ The build was inspired by the [Polish LoRa/Meshtastic community at meshtastic.po
 
 ### Build from Source
 
-See [HYDRA_E22_TUTORIAL.md](HYDRA_E22_TUTORIAL.md) for a complete step-by-step guide.
+See [HYDRA_E22_TUTORIAL_EN.md](HYDRA_E22_TUTORIAL_EN.md) for a complete step-by-step guide (English) or [HYDRA_E22_TUTORIAL.md](HYDRA_E22_TUTORIAL.md) (Polish).
 
 Requires: Python 3.10+, PlatformIO (VS Code extension or CLI).
 
