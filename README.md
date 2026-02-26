@@ -53,7 +53,7 @@ Projekt powstał w środowisku polskiej społeczności LoRa/Meshtastic na [mesht
    rnodeconf COM11 --product f0 --model fe --hwrev 1
    ```
 
-4. Skonfiguruj Reticulum (`%USERPROFILE%\.reticulum\config` lub `~/.reticulum/config`):
+5. Skonfiguruj Reticulum (`%USERPROFILE%\.reticulum\config` lub `~/.reticulum/config`):
    ```ini
    [[LORA V2]]
      type = RNodeInterface
@@ -165,7 +165,7 @@ The build was inspired by the [Polish LoRa/Meshtastic community at meshtastic.po
    rnodeconf COM11 --product f0 --model fe --hwrev 1
    ```
 
-4. Configure Reticulum (`~/.reticulum/config`):
+5. Configure Reticulum (`~/.reticulum/config`):
    ```ini
    [[LORA V2]]
      type = RNodeInterface
