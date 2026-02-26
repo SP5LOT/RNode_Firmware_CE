@@ -39,7 +39,7 @@ void busyCallback(const void* p) { display_callback(); }
 
 #elif DISPLAY == TFT
     // t114
-    #include "src/display/ST7789.h"
+    #include "display/ST7789.h"
     #define DISPLAY_WHITE ST77XX_WHITE
     #define DISPLAY_BLACK ST77XX_BLACK
     #define COLOR565(r, g, b) (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3))
@@ -167,7 +167,7 @@ uint32_t last_epd_full_refresh = 0;
 #define REFRESH_PERIOD 300000 // 5 minutes in ms
 #else
   #if DISPLAY == OLED
-    Adafruit_SSD1306 display(DISP_W, DISP_H, &Wire, DISP_RST);
+    Adafruit_SSD1306 display(DISP_W, DISP_H, &Wire, DISP_RST, 400000UL, 400000UL);
   #elif BOARD_MODEL == BOARD_TDECK
     Adafruit_ST7789 display = Adafruit_ST7789(DISPLAY_CS, DISPLAY_DC, -1);
   #elif BOARD_MODEL == BOARD_TBEAM_S_V1
@@ -379,6 +379,9 @@ bool display_init() {
       Wire.begin(SDA_OLED, SCL_OLED);
     #elif BOARD_MODEL == BOARD_XIAO_S3
       Wire.begin(SDA_OLED, SCL_OLED);
+    #elif BOARD_MODEL == BOARD_HYDRA_E22
+      Wire.begin(I2C_SDA, I2C_SCL);
+      Wire.setClock(400000);
     #endif
 
     #if HAS_EEPROM
@@ -1183,6 +1186,9 @@ void update_display(bool blank = false) {
           epd_blanked = false;
         }
       #elif BOARD_MODEL != BOARD_TDECK
+        #if BOARD_MODEL == BOARD_HYDRA_E22
+          Wire.setClock(400000);
+        #endif
         display.display();
       #endif
 

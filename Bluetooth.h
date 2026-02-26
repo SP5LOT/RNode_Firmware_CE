@@ -22,7 +22,7 @@
   #elif HAS_BLE == true
     #include "esp_bt_main.h"
     #include "esp_bt_device.h"
-    #include "src/ble/BLESerial.h"
+    #include "ble/BLESerial.h"
     BLESerial SerialBT;
   #endif
 

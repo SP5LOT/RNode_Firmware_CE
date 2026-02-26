@@ -36,7 +36,7 @@
 
 #include "ROM.h"
 #include "Framing.h"
-#include "src/misc/MD5.h"
+#include "misc/MD5.h"
 
 #if !HAS_EEPROM && MCU_VARIANT == MCU_NRF52
 uint8_t eeprom_read(uint32_t mapped_addr);
@@ -63,7 +63,7 @@ uint8_t eeprom_read(uint32_t mapped_addr);
 #endif
 
 #if HAS_GPS
-    #include "src/misc/gps.h"
+    #include "misc/gps.h"
 #endif
 
 #if MCU_VARIANT == MCU_ESP32 || MCU_VARIANT == MCU_NRF52
@@ -206,6 +206,13 @@ uint8_t boot_vector = 0x00;
 		void led_id_on()  { }
 		void led_id_off() { }
 	#elif BOARD_MODEL == BOARD_E22_ESP32
+		void led_rx_on()  { digitalWrite(pin_led_rx, HIGH); }
+		void led_rx_off() {	digitalWrite(pin_led_rx, LOW); }
+		void led_tx_on()  { digitalWrite(pin_led_tx, HIGH); }
+		void led_tx_off() { digitalWrite(pin_led_tx, LOW); }
+		void led_id_on()  { }
+		void led_id_off() { }
+	#elif BOARD_MODEL == BOARD_HYDRA_E22
 		void led_rx_on()  { digitalWrite(pin_led_rx, HIGH); }
 		void led_rx_off() {	digitalWrite(pin_led_rx, LOW); }
 		void led_tx_on()  { digitalWrite(pin_led_tx, HIGH); }
@@ -788,6 +795,17 @@ void kiss_indicate_radiostate(RadioInterface* radio) {
 	serial_write(FEND);
 	serial_write(CMD_RADIO_STATE);
 	serial_write(radio->getRadioOnline());
+	serial_write(FEND);
+}
+
+void kiss_indicate_radiostate_value(RadioInterface* radio, uint8_t state) {
+	serial_write(FEND);
+    serial_write(CMD_SEL_INT);
+    serial_write(radio->getIndex());
+	serial_write(FEND);
+	serial_write(FEND);
+	serial_write(CMD_RADIO_STATE);
+	serial_write(state);
 	serial_write(FEND);
 }
 
@@ -1575,6 +1593,8 @@ bool eeprom_model_valid() {
 	if (model == MODEL_FF) {
 	#elif BOARD_MODEL == BOARD_E22_ESP32
 	if (model == MODEL_FF || model == MODEL_FE) {
+	#elif BOARD_MODEL == BOARD_HYDRA_E22
+	if (model == MODEL_FF || model == MODEL_FE) {
 	#elif BOARD_MODEL == BOARD_HMBRW
 	if (model == MODEL_FF || model == MODEL_FE) {
 	#elif BOARD_MODEL == BOARD_GENERIC_ESP32
@@ -1812,4 +1832,4 @@ void log_debug(char* msg) {
     serial_write(FEND);
 }
 
-#include "src/misc/FIFOBuffer.h"
+#include "misc/FIFOBuffer.h"
