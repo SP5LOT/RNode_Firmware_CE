@@ -292,11 +292,8 @@ After flashing, the firmware has no EEPROM data — `rnsd` will reject the devic
 # Check state before
 rnodeconf COM11 --info
 
-# Reset EEPROM
-rnodeconf COM11 -r
-
-# Set product parameters
-rnodeconf COM11 --product f0 --model fe --hwrev 1
+# Bootstrap and provision in one command
+rnodeconf COM11 -r --product f0 --model fe --hwrev 1
 
 # Verify — should show HMBRW, model FE, hwrev 1
 rnodeconf COM11 --info

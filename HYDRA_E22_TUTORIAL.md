@@ -276,11 +276,8 @@ Po flashu firmware nie ma danych EEPROM — rnsd odrzuci urządzenie.
 # Sprawdź stan przed
 rnodeconf COM11 --info
 
-# Reset EEPROM
-rnodeconf COM11 -r
-
-# Ustaw parametry produktu
-rnodeconf COM11 --product f0 --model fe --hwrev 1
+# Bootstrap i prowizjonowanie jednym poleceniem
+rnodeconf COM11 -r --product f0 --model fe --hwrev 1
 
 # Sprawdź wynik — powinno pokazać HMBRW, model FE, hwrev 1
 rnodeconf COM11 --info

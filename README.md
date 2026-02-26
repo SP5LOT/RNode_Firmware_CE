@@ -49,8 +49,7 @@ Projekt powstał w środowisku polskiej społeczności LoRa/Meshtastic na [mesht
 
 4. Provisionuj urządzenie:
    ```bash
-   rnodeconf COM11 -r
-   rnodeconf COM11 --product f0 --model fe --hwrev 1
+   rnodeconf COM11 -r --product f0 --model fe --hwrev 1
    ```
 
 5. Skonfiguruj Reticulum (`%USERPROFILE%\.reticulum\config` lub `~/.reticulum/config`):
@@ -161,8 +160,7 @@ The build was inspired by the [Polish LoRa/Meshtastic community at meshtastic.po
 
 4. Provision the device:
    ```bash
-   rnodeconf COM11 -r
-   rnodeconf COM11 --product f0 --model fe --hwrev 1
+   rnodeconf COM11 -r --product f0 --model fe --hwrev 1
    ```
 
 5. Configure Reticulum (`~/.reticulum/config`):
