@@ -111,6 +111,8 @@
 
   #define BOARD_E22_ESP32     0x45 // Custom Ebyte E22 board design for meshtastic, source:
                                    // https://github.com/NanoVHF/Meshtastic-DIY/blob/main/Schematics/E-Byte_E22/Mesh_Ebyte_E22-XXXM30S.pdf
+  #define BOARD_HYDRA_E22     0x46 // Hydra Designs DIY PCB: ESP32-WROOM-32U + E22-900M30S
+                                   // https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb
 
   #define PRODUCT_HELTEC_T114 0xC2 // Heltec Mesh Node T114
   #define BOARD_HELTEC_T114   0x3C
@@ -1031,7 +1033,47 @@
               -1  // pin_tcxo_enable
           }
       };
- #elif BOARD_MODEL == BOARD_XIAO_S3
+    #elif BOARD_MODEL == BOARD_HYDRA_E22
+      // Hydra Designs DIY PCB: ESP32-WROOM-32U + Ebyte E22-900M30S (SX1262, 30dBm)
+      // Schematic: https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb
+      #define VALIDATE_FIRMWARE false
+      #define HAS_DISPLAY true
+      #define DISPLAY OLED
+      #define HAS_BLUETOOTH true
+      #define HAS_CONSOLE true
+      #define HAS_SD false
+      #define HAS_EEPROM true
+      #define I2C_SDA 21
+      #define I2C_SCL 22
+      #define INTERFACE_COUNT 1
+      const int pin_led_rx = 2;
+      const int pin_led_tx = 2;
+
+      const uint8_t interfaces[INTERFACE_COUNT] = {SX1262};
+      const bool interface_cfg[INTERFACE_COUNT][3] = {
+                    // SX1262
+          {
+              false, // DEFAULT_SPI
+              true,  // HAS_TCXO
+              false  // DIO2_AS_RF_SWITCH (using explicit TXEN/RXEN pins)
+          },
+      };
+      const int8_t interface_pins[INTERFACE_COUNT][10] = {
+                  // SX1262
+          {
+              18, // pin_ss   (SX126X_CS,    GPIO18)
+               5, // pin_sclk (SX126X_SCK,   GPIO5)
+              27, // pin_mosi (SX126X_MOSI,  GPIO27)
+              19, // pin_miso (SX126X_MISO,  GPIO19)
+              32, // pin_busy (SX126X_BUSY,  GPIO32)
+              33, // pin_dio  (SX126X_DIO1,  GPIO33)
+              23, // pin_reset(SX126X_RESET, GPIO23)
+              13, // pin_txen (SX126X_TXEN,  GPIO13)
+              14, // pin_rxen (SX126X_RXEN,  GPIO14)
+              -1  // pin_tcxo_enable
+          }
+      };
+    #elif BOARD_MODEL == BOARD_XIAO_S3
       #define IS_ESP32S3 true
 
       #define HAS_DISPLAY true
@@ -1120,7 +1162,7 @@
       #define EEPROM_OFFSET EEPROM_SIZE-EEPROM_RESERVED
       #define HAS_EEPROM false
       #define HAS_SD false
-      #define HAS_DISPLAY false //Temporarially disable display code to not burn out the e-ink until the display code is fixed 
+      #define HAS_DISPLAY true
       #define DISPLAY EINK_BW
       #define DISPLAY_MODEL GxEPD2_154_D67
       #define BLE_MANUFACTURER "LilyGO"
