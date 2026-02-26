@@ -5,7 +5,7 @@
 // Obviously still under the MIT license.
 
 #include "Radio.hpp"
-#include "src/misc/ModemISR.h"
+#include "misc/ModemISR.h"
 
 #if PLATFORM == PLATFORM_ESP32 
   #if defined(ESP32) and !defined(CONFIG_IDF_TARGET_ESP32S3)
@@ -92,11 +92,11 @@
 extern FIFOBuffer packet_rdy_interfaces;
 extern RadioInterface* interface_obj[];
 
-sx126x::sx126x(uint8_t index, SPIClass* spi, bool tcxo, bool dio2_as_rf_switch, int ss, int sclk, int mosi, int miso, int reset, int dio0, int busy, int rxen) :
+sx126x::sx126x(uint8_t index, SPIClass* spi, bool tcxo, bool dio2_as_rf_switch, int ss, int sclk, int mosi, int miso, int reset, int dio0, int busy, int rxen, int txen) :
   RadioInterface(index),
     _spiSettings(8E6, MSBFIRST, SPI_MODE0), _spiModem(spi), _ss(ss),
     _sclk(sclk), _mosi(mosi), _miso(miso), _reset(reset), _dio0(dio0),
-    _busy(busy), _rxen(rxen), _frequency(0), _bw(0x04),
+    _busy(busy), _rxen(rxen), _txen(txen), _frequency(0), _bw(0x04),
     _cr(0x01), _packetIndex(0), _implicitHeaderMode(0),
     _payloadLength(255), _crcMode(1), _fifo_tx_addr_ptr(0),
     _fifo_rx_addr_ptr(0), _preinit_done(false), _tcxo(tcxo),
@@ -112,7 +112,7 @@ sx126x::sx126x(uint8_t index, SPIClass* spi, bool tcxo, bool dio2_as_rf_switch, 
 bool sx126x::preInit() {
   pinMode(_ss, OUTPUT);
   digitalWrite(_ss, HIGH);
-  
+
   // todo: check if this change causes issues on any platforms
   #if MCU_VARIANT == MCU_ESP32
   if (_sclk != -1 && _miso != -1 && _mosi != -1 && _ss != -1) {
@@ -180,9 +180,14 @@ uint8_t ISR_VECT sx126x::singleTransfer(uint8_t opcode, uint16_t address, uint8_
 
 void sx126x::rxAntEnable()
 {
-  if (_rxen != -1) {
-    digitalWrite(_rxen, HIGH);
-  }
+  if (_txen != -1) { digitalWrite(_txen, LOW); }
+  if (_rxen != -1) { digitalWrite(_rxen, HIGH); }
+}
+
+void sx126x::txAntEnable()
+{
+  if (_rxen != -1) { digitalWrite(_rxen, LOW); }
+  if (_txen != -1) { digitalWrite(_txen, HIGH); }
 }
 
 void sx126x::loraMode() {
@@ -364,6 +369,7 @@ int sx126x::begin()
   }
 
   if (_rxen != -1) { pinMode(_rxen, OUTPUT); }
+  if (_txen != -1) { pinMode(_txen, OUTPUT); }
 
   calibrate();
   calibrate_image(_frequency);
@@ -439,6 +445,9 @@ int sx126x::endPacket()
 {
     setPacketParams(_preambleLength, _implicitHeaderMode, _payloadLength, _crcMode);
 
+    // switch antenna to TX mode before transmitting
+    txAntEnable();
+
     // put in single TX mode
     uint8_t timeout[3] = {0};
     executeOpcode(OP_TX_6X, timeout, 3);
@@ -468,6 +477,10 @@ int sx126x::endPacket()
     mask[0] = 0x00;
     mask[1] = IRQ_TX_DONE_MASK_6X;
     executeOpcode(OP_CLEAR_IRQ_STATUS_6X, mask, 2);
+
+    // switch antenna back to RX mode after TX
+    rxAntEnable();
+
     return !timed_out;
 }
 
@@ -713,6 +726,8 @@ void sx126x::enableTCXO() {
       uint8_t buf[4] = {MODE_TCXO_1_8V_6X, 0x00, 0x00, 0xFF};
     #elif BOARD_MODEL == BOARD_E22_ESP32
       uint8_t buf[4] = {MODE_TCXO_1_8V_6X, 0x00, 0x00, 0xFF};
+    #elif BOARD_MODEL == BOARD_HYDRA_E22
+      uint8_t buf[4] = {MODE_TCXO_1_8V_6X, 0x00, 0x00, 0xFF};
     #else
       uint8_t buf[4] = {0};
     #endif
@@ -724,8 +739,16 @@ void sx126x::enableTCXO() {
 void sx126x::disableTCXO() { }
 
 void sx126x::setTxPower(int level, int outputPin) {
+    // Clamp and store value first so kiss_indicate_txpower() returns it immediately
+    if (level > 22) { level = 22; }
+    else if (level < -9) { level = -9; }
+    _txp = level;
+
+    // Skip SPI configuration if radio SPI bus is not yet initialised (before begin())
+    if (!_preinit_done) return;
+
     // currently no low power mode for SX1262 implemented, assuming PA boost
-    
+
     // WORKAROUND - Better Resistance of the SX1262 Tx to Antenna Mismatch, see DS_SX1261-2_V1.2 datasheet chapter 15.2
     // RegTxClampConfig = @address 0x08D8
     writeRegister(0x08D8, readRegister(0x08D8) | (0x0F << 1));
@@ -738,11 +761,6 @@ void sx126x::setTxPower(int level, int outputPin) {
     pa_buf[3] = 0x01; // PALut always 0x01 (reserved according to datasheet)
 
     executeOpcode(OP_PA_CONFIG_6X, pa_buf, 4); // set pa_config for high power
-
-    if (level > 22) { level = 22; }
-    else if (level < -9) { level = -9; }
-
-    _txp = level;
 
     writeRegister(REG_OCP_6X, OCP_TUNED); // 160mA limit, overcurrent protection
 
@@ -760,6 +778,9 @@ int8_t sx126x::getTxPower() {
 
 void sx126x::setFrequency(uint32_t frequency) {
   _frequency = frequency;
+
+  // Skip SPI if radio not yet initialised (before begin())
+  if (!_preinit_done) return;
 
   uint8_t buf[4];
 
@@ -791,6 +812,8 @@ void sx126x::setSpreadingFactor(int sf)
   _sf = sf;
 
   handleLowDataRate();
+  // Skip SPI if radio not yet initialised (before begin())
+  if (!_preinit_done) return;
   setModulationParams(sf, _bw, _cr, _ldro);
 }
 
@@ -854,6 +877,8 @@ void sx126x::setSignalBandwidth(uint32_t sbw)
   }
 
   handleLowDataRate();
+  // Skip SPI if radio not yet initialised (before begin())
+  if (!_preinit_done) return;
   setModulationParams(_sf, _bw, _cr, _ldro);
 
   optimizeModemSensitivity();
@@ -871,6 +896,8 @@ void sx126x::setCodingRate4(int denominator)
 
   _cr = cr;
 
+  // Skip SPI if radio not yet initialised (before begin())
+  if (!_preinit_done) return;
   setModulationParams(_sf, _bw, cr, _ldro);
 }
 

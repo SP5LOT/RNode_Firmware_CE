@@ -11,7 +11,7 @@
 #include <SPI.h>
 #include "Interfaces.h"
 #include "Boards.h"
-#include "src/misc/FIFOBuffer.h"
+#include "misc/FIFOBuffer.h"
 
 #define MAX_PKT_LENGTH                255
 
@@ -460,7 +460,7 @@ protected:
 class sx126x : public RadioInterface {
 public:
   sx126x(uint8_t index, SPIClass* spi, bool tcxo, bool dio2_as_rf_switch, int ss, int sclk, int mosi, int miso, int reset, int
-          dio0, int busy, int rxen);
+          dio0, int busy, int rxen, int txen = -1);
 
   void reset();
 
@@ -525,6 +525,7 @@ private:
   void readBuffer(uint8_t* buffer, size_t size);
   void loraMode();
   void rxAntEnable();
+  void txAntEnable();
   void setPacketParams(uint32_t preamble, uint8_t headermode, uint8_t length, uint8_t crc);
   void setModulationParams(uint8_t sf, uint8_t bw, uint8_t cr, int ldro);
   void setSyncWord(uint16_t sw);
@@ -558,6 +559,7 @@ private:
   int _reset;
   int _dio0;
   int _rxen;
+  int _txen;
   int _busy;
   uint32_t _frequency;
   uint8_t _bw;
