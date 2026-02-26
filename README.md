@@ -2,7 +2,7 @@
 
 This is a fork of [RNode Firmware Community Edition](https://github.com/liberatedsystems/RNode_Firmware_CE) with added support for the **Hydra Designs DIY PCB** — ESP32-WROOM-32U + Ebyte E22-900M30S (SX1262, 30 dBm).
 
-The board is available from [meshtastic.pop.pl](https://meshtastic.pop.pl) and is based on the [Hydra Designs schematic](https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb).
+The build was discussed in the [Polish LoRa/Meshtastic community at meshtastic.pop.pl](https://meshtastic.pop.pl) (Polish-language DIY forum). The board is based on the open [Hydra Designs schematic](https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb).
 
 > **Branch `hydra-e22`** contains all modifications and a compiled firmware binary ready to flash.
 
