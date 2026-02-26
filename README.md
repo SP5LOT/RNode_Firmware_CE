@@ -31,17 +31,23 @@ Projekt powstał w środowisku polskiej społeczności LoRa/Meshtastic na [mesht
 
 ### Szybki start — wgranie gotowego firmware
 
-1. Zainstaluj wymagane narzędzia:
+1. Pobierz **[hydra_e22_flash_package.zip](firmware/hydra_e22_flash_package.zip)** i rozpakuj.
+
+2. Zainstaluj wymagane narzędzia:
    ```bash
-   pip install rns pyserial
+   pip install rns pyserial esptool
    ```
 
-2. Wgraj firmware (zamień `COM11` na swój port):
+3. Wgraj firmware — Windows (zamień `COM11` na swój port):
+   ```
+   flash.bat  (edytuj PORT= w pliku)
+   ```
+   lub ręcznie (Linux/Mac: `bash flash.sh /dev/ttyUSB0`):
    ```bash
-   python -m esptool --port COM11 --baud 921600 write_flash 0x10000 firmware/firmware_hydra_e22.bin
+   python -m esptool --chip esp32 --port COM11 --baud 921600 write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 bootloader.bin 0x8000 partitions.bin 0xe000 boot_app0.bin 0x10000 firmware.bin
    ```
 
-3. Provisionuj urządzenie:
+4. Provisionuj urządzenie:
    ```bash
    rnodeconf COM11 -r
    rnodeconf COM11 --product f0 --model fe --hwrev 1
@@ -137,17 +143,23 @@ The build was inspired by the [Polish LoRa/Meshtastic community at meshtastic.po
 
 ### Quick Start — Flash Prebuilt Firmware
 
-1. Install dependencies:
+1. Download **[hydra_e22_flash_package.zip](firmware/hydra_e22_flash_package.zip)** and extract it.
+
+2. Install dependencies:
    ```bash
-   pip install rns pyserial
+   pip install rns pyserial esptool
    ```
 
-2. Flash the binary (replace `COM11` with your port):
+3. Flash — Windows (edit `PORT=` in the file):
+   ```
+   flash.bat
+   ```
+   or manually (Linux/Mac: `bash flash.sh /dev/ttyUSB0`):
    ```bash
-   python -m esptool --port COM11 --baud 921600 write_flash 0x10000 firmware/firmware_hydra_e22.bin
+   python -m esptool --chip esp32 --port COM11 --baud 921600 write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 bootloader.bin 0x8000 partitions.bin 0xe000 boot_app0.bin 0x10000 firmware.bin
    ```
 
-3. Provision the device:
+4. Provision the device:
    ```bash
    rnodeconf COM11 -r
    rnodeconf COM11 --product f0 --model fe --hwrev 1
