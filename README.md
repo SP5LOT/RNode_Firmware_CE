@@ -10,6 +10,12 @@ To jest fork [RNode Firmware Community Edition](https://github.com/liberatedsyst
 
 Projekt powstał w środowisku polskiej społeczności LoRa/Meshtastic na [meshtastic.pop.pl](https://meshtastic.pop.pl) — polskie forum DIY z poradnikami jak zbudować takie urządzenie, listami komponentów i pomocą techniczną. Płytka bazuje na otwartym schemacie [Hydra Designs](https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb).
 
+**Przydatne linki:**
+- [Opis i zdjęcia BM-NODE DIY v.2 (wątek na forum)](https://meshtastic.pop.pl/viewtopic.php?t=41) — modularny nod z obsługą E22, ESP32, nRF52840, telemetrią i GPS
+- [Kup gotowy BM-NODE DIY v.2 (Allegro Lokalnie)](https://allegrolokalnie.pl/oferta/meshtastic-router-nod-modularny-bmnode-diy-v21)
+- [Kup samą PCB + adapter E22/HT-RA62](https://allegrolokalnie.pl/oferta/meshtastic-router-nod-modularny-bmnode-diy-tylko-pcb-adapter-e22htra62)
+- [Adapter/konwerter nRF52840 do ESP32](https://allegrolokalnie.pl/oferta/meshtastic-nod-bmnode-diy-adapterkonwerter-nrf52840-do-esp32)
+
 > **Branch `hydra-e22`** zawiera wszystkie modyfikacje i skompilowany firmware gotowy do wgrania.
 
 ---
@@ -109,6 +115,12 @@ Oryginalny firmware autorstwa Mark Qvist / [unsigned.io](https://unsigned.io).
 This is a fork of [RNode Firmware Community Edition](https://github.com/liberatedsystems/RNode_Firmware_CE) with added support for the **Hydra Designs DIY PCB** — ESP32-WROOM-32U + Ebyte E22-900M30S (SX1262, 30 dBm).
 
 The build was inspired by the [Polish LoRa/Meshtastic community at meshtastic.pop.pl](https://meshtastic.pop.pl) — a Polish-language DIY forum with guides on how to build nodes like this one, component lists, and community support. The board is based on the open [Hydra Designs schematic](https://github.com/Hydra-Designs/project-hydra-meshtastic-pcb).
+
+**Useful links:**
+- [BM-NODE DIY v.2 build guide with photos (forum thread)](https://meshtastic.pop.pl/viewtopic.php?t=41) — modular node supporting E22, ESP32, nRF52840, telemetry and GPS
+- [Buy assembled BM-NODE DIY v.2 (Allegro Lokalnie)](https://allegrolokalnie.pl/oferta/meshtastic-router-nod-modularny-bmnode-diy-v21)
+- [Buy PCB only + E22/HT-RA62 adapter](https://allegrolokalnie.pl/oferta/meshtastic-router-nod-modularny-bmnode-diy-tylko-pcb-adapter-e22htra62)
+- [nRF52840 to ESP32 adapter/converter](https://allegrolokalnie.pl/oferta/meshtastic-nod-bmnode-diy-adapterkonwerter-nrf52840-do-esp32)
 
 > **Branch `hydra-e22`** contains all modifications and a compiled firmware binary ready to flash.
 
